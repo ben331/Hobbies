@@ -11,4 +11,5 @@
     <string name="email_address">Email address</string>
     <string name="already_have_account">already have account</string>
     <string name="full_name">Full name</string>
+    <string name="birthday_dd_mm_yyyy">Birthday DD/MM/YYYY</string>
 </resources>

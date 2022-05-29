@@ -13,7 +13,7 @@
         android:layout_marginTop="64dp"
         android:autofillHints=""
         android:ems="10"
-        android:hint="@string/full_name"
+        android:hint="@string/email_address"
         android:inputType="textPersonName"
         android:minHeight="48dp"
         android:textColorHint="#757575"
