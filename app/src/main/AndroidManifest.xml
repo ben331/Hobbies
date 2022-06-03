@@ -10,7 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hobbies">
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
