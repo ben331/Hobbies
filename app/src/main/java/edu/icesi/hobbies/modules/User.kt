@@ -1,8 +1,6 @@
 package edu.icesi.hobbies.modules
 
 import java.io.Serializable
-import java.time.LocalDate
-import java.util.*
 
 class User(): Serializable{
     var id:String = "Dummy"

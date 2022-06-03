@@ -8,7 +8,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import edu.icesi.hobbies.databinding.ActivitySignUpBinding
-import edu.icesi.hobbies.modules.User
+import edu.icesi.hobbies.model.User
 import java.time.LocalDate
 
 class SignUpActivity : AppCompatActivity() {
