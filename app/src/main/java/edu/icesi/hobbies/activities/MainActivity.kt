@@ -11,7 +11,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import edu.icesi.hobbies.databinding.ActivityMainBinding
-import edu.icesi.hobbies.modules.User
+import edu.icesi.hobbies.model.User
 
 class MainActivity : AppCompatActivity() {
 

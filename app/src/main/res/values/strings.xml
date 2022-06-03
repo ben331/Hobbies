@@ -5,4 +5,15 @@
     <string name="alert_exit">want to leave Hobbies?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="email_adress">Email Adress</string>
+    <string name="todo">TODO</string>
+    <string name="password">password</string>
+    <string name="forgot_your_password">forgot your password</string>
+    <string name="log_in">LOG IN</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="full_name">Full name</string>
+    <string name="confirm_your_password">Confirm your password</string>
+    <string name="birthday_dd_mm_yyyy">Birthday DD/MM/YYYY</string>
+    <string name="already_have_an_account">Already have an account</string>
+    <string name="hello_blank_fragment">hello blank fragment</string>
 </resources>
