@@ -6,11 +6,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import edu.icesi.hobbies.adapters.MessageAdapter
+import edu.icesi.hobbies.adapter.MessageAdapter
 import edu.icesi.hobbies.databinding.ActivityChatBinding
 import edu.icesi.hobbies.model.Message
-import kotlinx.android.synthetic.main.activity_chat.*
-import java.util.*
 
 class ChatActivity : AppCompatActivity() {
 
@@ -33,10 +31,10 @@ class ChatActivity : AppCompatActivity() {
         }
     }
     private fun initViews(){
-        messagesRecylerView.layoutManager = LinearLayoutManager(this)
-        messagesRecylerView.adapter = MessageAdapter(user)
+        binding.messagesRecylerView.layoutManager = LinearLayoutManager(this)
+        binding.messagesRecylerView.adapter = MessageAdapter(user)
 
-        sendMessageButton.setOnClickListener { sendMessage() }
+        binding.sendMessageButton.setOnClickListener { sendMessage() }
 
         val chatRef = db.collection("chats").document(chatId)
 
@@ -44,7 +42,7 @@ class ChatActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { messages ->
                 val listMessages = messages.toObjects(Message::class.java)
-                (messagesRecylerView.adapter as MessageAdapter).setData(listMessages)
+                (binding.messagesRecylerView.adapter as MessageAdapter).setData(listMessages)
             }
 
         chatRef.collection("messages").orderBy("dob", Query.Direction.ASCENDING)
@@ -52,7 +50,7 @@ class ChatActivity : AppCompatActivity() {
                 if(error == null){
                     messages?.let {
                         val listMessages = it.toObjects(Message::class.java)
-                        (messagesRecylerView.adapter as MessageAdapter).setData(listMessages)
+                        (binding.messagesRecylerView.adapter as MessageAdapter).setData(listMessages)
                     }
                 }
             }
@@ -60,11 +58,11 @@ class ChatActivity : AppCompatActivity() {
 
     private fun sendMessage(){
         val message = Message(
-            message = messageTextField.text.toString(),
+            message = binding.messageTextField.text.toString(),
             from = user
         )
         db.collection("chats").document(chatId).collection("messages").document().set(message)
 
-        messageTextField.setText("")
+        binding.messageTextField.setText("")
     }
 }
