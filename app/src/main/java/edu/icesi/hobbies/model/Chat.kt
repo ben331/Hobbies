@@ -1,9 +1,7 @@
 package edu.icesi.hobbies.model
 
-class Chat {
-
-
-    fun sendRequest(clubChatId:String){
-
-    }
-}
+data class Chat(
+    var id: String = "",
+    var name: String = "",
+    var users: List<String> = emptyList()
+)
