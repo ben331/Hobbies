@@ -8,6 +8,6 @@ class Club(id:String, name:String, hobby:Hobby, admin:Admin){
     private var users:ArrayList<User> = ArrayList()
     private var admin:Admin = admin
     private var chat:Chat = Chat()
-    private var event:ArrayList<Events> = ArrayList()
+    private var events:ArrayList<Event> = ArrayList()
 
 }
