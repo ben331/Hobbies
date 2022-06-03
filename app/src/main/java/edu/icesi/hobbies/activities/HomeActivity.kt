@@ -17,7 +17,7 @@ class HomeActivity : AppCompatActivity() {
 
     //Fragments
     private lateinit var homeFragment: HomeFragment
-    private lateinit var mapFragment: MapFragment
+    private lateinit var liveMapFragment: LiveMapFragment
     private lateinit var profileFragment: ProfileFragment
 
     //Binding
@@ -35,7 +35,7 @@ class HomeActivity : AppCompatActivity() {
 
         //Instance fragments
         profileFragment = ProfileFragment.newInstance()
-        mapFragment = MapFragment.newInstance()
+        liveMapFragment = LiveMapFragment.newInstance()
         homeFragment = HomeFragment.newInstance()
 
         //Add Listeners
@@ -46,7 +46,7 @@ class HomeActivity : AppCompatActivity() {
         binding.navigator.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.homeItem -> showFragment(homeFragment)
-                R.id.mapItem -> if(haveLocationPermissions) showFragment(mapFragment) else requestLocationPermissions()
+                R.id.mapItem -> if(haveLocationPermissions) showFragment(liveMapFragment) else requestLocationPermissions()
                 R.id.profileItem -> showFragment(profileFragment)
             }
             true
@@ -95,7 +95,7 @@ class HomeActivity : AppCompatActivity() {
             haveLocationPermissions = haveLocationPermissions && (result!=-1)
         }
 
-        if(haveLocationPermissions) showFragment(mapFragment)
+        if(haveLocationPermissions) showFragment(liveMapFragment)
     }
 
     //-----------------------------------------------   CLOSE APP   ---------------------------------------------
