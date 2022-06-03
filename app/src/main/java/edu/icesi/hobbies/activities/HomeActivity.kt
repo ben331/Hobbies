@@ -1,5 +1,6 @@
 package edu.icesi.hobbies.activities
 
+import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,7 +8,6 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import edu.icesi.hobbies.R
@@ -23,6 +23,9 @@ class HomeActivity : AppCompatActivity() {
     //Binding
     private var _binding: ActivityHomeBinding? = null
     private val binding get() = _binding!!
+
+    //Vars
+    private var haveLocationPermissions = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +46,7 @@ class HomeActivity : AppCompatActivity() {
         binding.navigator.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.homeItem -> showFragment(homeFragment)
-                R.id.mapItem -> showFragment(homeFragment)
+                R.id.mapItem -> if(haveLocationPermissions) showFragment(mapFragment) else requestLocationPermissions()
                 R.id.profileItem -> showFragment(profileFragment)
             }
             true
@@ -67,6 +70,32 @@ class HomeActivity : AppCompatActivity() {
             R.id.search_action -> Toast.makeText(this, "Search Button Pressed", Toast.LENGTH_SHORT).show()
         }
         return super.onOptionsItemSelected(menu)
+    }
+
+    //-----------------------------------------------   PERMISSIONS   ---------------------------------------------
+    private fun requestLocationPermissions(){
+        requestPermissions(
+            arrayOf(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ),
+            1
+        )
+    }
+
+    //Result after ask for permissions
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        haveLocationPermissions = true
+        for (result in grantResults) {
+            haveLocationPermissions = haveLocationPermissions && (result!=-1)
+        }
+
+        if(haveLocationPermissions) showFragment(mapFragment)
     }
 
     //-----------------------------------------------   CLOSE APP   ---------------------------------------------
