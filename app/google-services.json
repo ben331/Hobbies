@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "414671962237",
+    "project_id": "hobbies-52e63",
+    "storage_bucket": "hobbies-52e63.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414671962237:android:6fcc988f252a647800f114",
+        "android_client_info": {
+          "package_name": "edu.icesi.hobbies"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "414671962237-59ecft375hr4u6d9h6ujcneksuuf0dru.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8U1MFC_SqpUA42G4ONZgXSlZgm-gqclk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "414671962237-59ecft375hr4u6d9h6ujcneksuuf0dru.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
