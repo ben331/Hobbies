@@ -1,15 +1,8 @@
 <resources>
     <string name="app_name">Hobbies</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="forgot_your_password">forgot your password?</string>
-    <string name="todo">TODO</string>
-    <string name="log_in">LOG IN</string>
-    <string name="sign_up">SIGN UP</string>
-    <string name="confirm_your_password">Confirm your password</string>
-    <string name="birthday">Birthday</string>
-    <string name="email_address">Email address</string>
-    <string name="already_have_account">already have account</string>
-    <string name="full_name">Full name</string>
-    <string name="birthday_dd_mm_yyyy">Birthday DD/MM/YYYY</string>
+
+    //Alerts
+    <string name="alert_exit">want to leave Hobbies?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
