@@ -30,7 +30,7 @@ class LocationActivity : AppCompatActivity() {
 
         //Show Map Fragment---------------------------------------------------------------
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragmentContainer, mapsFragment)
+        transaction.replace(R.id.container, mapsFragment)
         transaction.commit()
 
         //Cancel Button---------------------------------------------------------------

@@ -92,7 +92,7 @@ class HomeFragment : Fragment() {
         val query = Firebase.firestore.collection("users").document(userId).collection("clubs")
         query.get().addOnCompleteListener { task ->
 
-            var clubs:ArrayList<Club> = ArrayList()
+            val clubs:ArrayList<Club> = ArrayList()
             if(task.result?.size() != 0){
                 for(document in task.result!!){
                     val club = document.toObject(Club::class.java)
@@ -104,7 +104,6 @@ class HomeFragment : Fragment() {
                         }
                     }
                 }
-
                 adapter.refreshClubs(clubs)
 
             }else{
@@ -121,14 +120,16 @@ class HomeFragment : Fragment() {
         val query = Firebase.firestore.collection("users").document(userId).collection("clubs")
         query.get().addOnCompleteListener { task ->
             if(task.result?.size() != 0){
+                val clubs:ArrayList<Club> = ArrayList()
                 for(document in task.result!!){
                     val club = document.toObject(Club::class.java)
                     lifecycleScope.launch(Dispatchers.IO){
                         withContext(Dispatchers.Main){
-                            adapter.addClub(club)
+                            clubs.add(club)
                         }
                     }
                 }
+                adapter.refreshClubs(clubs)
                 binding.welcomeText.visibility = View.GONE
             }else{
                 binding.welcomeText.visibility = View.VISIBLE

@@ -88,8 +88,13 @@ class NewEventActivity : AppCompatActivity() {
     }
 
     private fun onResultLocationSelected(result:ActivityResult){
-        val lat = result.data?.extras?.getDouble("lat", 0.506)!!
-        val lon = result.data?.extras?.getDouble("lon", 0.723)!!
-        pos = LatLng(lat, lon)
+        if(result.resultCode== RESULT_OK){
+            val lat = result.data?.extras?.getDouble("lat", 0.506)!!
+            val lon = result.data?.extras?.getDouble("lon", 0.723)!!
+            pos = LatLng(lat, lon)
+            binding.editTextEventPlace.setText(pos.toString())
+        }else{
+            Toast.makeText(this, "Location not selected", Toast.LENGTH_SHORT).show()
+        }
     }
 }

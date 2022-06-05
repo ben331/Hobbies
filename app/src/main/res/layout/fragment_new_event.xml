@@ -66,7 +66,7 @@
         app:layout_constraintTop_toBottomOf="@+id/editText_event_date" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnReturn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
@@ -76,7 +76,7 @@
         app:layout_constraintTop_toBottomOf="@+id/editText_event_place" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/btnSend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -87,13 +87,27 @@
 
     <EditText
         android:id="@+id/editText_event_place"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="5dp"
+        android:editable="false"
         android:ems="10"
         android:inputType="textPostalAddress"
+        app:layout_constraintEnd_toStartOf="@+id/btnLocationSelecter"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText_event_number" />
+
+    <Button
+        android:id="@+id/btnLocationSelecter"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="30dp"
+        app:icon="@android:drawable/ic_dialog_map"
+        app:iconGravity="textStart"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText_event_number" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

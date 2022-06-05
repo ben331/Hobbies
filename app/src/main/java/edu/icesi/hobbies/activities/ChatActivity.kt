@@ -50,7 +50,7 @@ class ChatActivity : AppCompatActivity() {
         binding.messagesRecylerView.adapter = adapter
 
         binding.btnNewEvent.setOnClickListener{
-            val intent = Intent(this, NewClubActivity::class.java)
+            val intent = Intent(this, NewEventActivity::class.java)
             intent.putExtra("clubId", chatId)
             startActivity(intent)
         }
