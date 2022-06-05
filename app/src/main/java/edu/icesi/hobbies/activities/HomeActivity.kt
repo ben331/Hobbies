@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import edu.icesi.hobbies.R
+import edu.icesi.hobbies.adapters.ChatAdapter
 import edu.icesi.hobbies.databinding.ActivityHomeBinding
 import edu.icesi.hobbies.model.Chat
 import edu.icesi.hobbies.model.User
@@ -142,7 +143,7 @@ class HomeActivity : AppCompatActivity() {
         binding.newChatBtn.setOnClickListener{ newChat()}
 
         binding.listChatsRecyclerView.layoutManager = LinearLayoutManager(this)
-        binding.listChatsRecyclerView.adapter = ChatAdapter {chat->
+        binding.listChatsRecyclerView.adapter = ChatAdapter { chat->
             chatSelected(chat)
         }
         val userRef = db.collection("users").document(user)

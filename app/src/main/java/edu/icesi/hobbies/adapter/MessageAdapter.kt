@@ -1,4 +1,4 @@
-package edu.icesi.hobbies.adapters
+package edu.icesi.hobbies.adapter
 
 import android.view.LayoutInflater
 import android.view.View
