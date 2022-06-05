@@ -52,7 +52,7 @@ class NewClubActivity : AppCompatActivity() {
             if(name.isEmpty() or hobbyName.isEmpty()){
                 Toast.makeText(this,"Empty values", Toast.LENGTH_SHORT).show()
             }else{
-                val hobby = Hobby(UUID.randomUUID().toString(),hobbyName)
+                val hobby = Hobby(UUID.randomUUID().toString(),hobbyName, "")
                 val clubId = UUID.randomUUID().toString()
                 val admin =  Admin(currentUser.id,currentUser.name,currentUser.birthday,currentUser.email,clubId)
                 val club = Club(clubId,name,hobby, admin)

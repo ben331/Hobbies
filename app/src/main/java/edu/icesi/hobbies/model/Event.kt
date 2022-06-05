@@ -14,8 +14,7 @@ data class Event(
     val chatClubId:String="",
 
     //Event GSC
-    val lat:Double,
-    val lng:Double,
+    val pos:LatLng? = null,
 
     //
     val description:String="",

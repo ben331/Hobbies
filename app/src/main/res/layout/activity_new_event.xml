@@ -97,4 +97,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText_event_place" />
 
+    <Button
+        android:id="@+id/btnPlaceSelecter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:icon="@android:drawable/ic_dialog_map"
+        app:iconGravity="textStart"
+        tools:layout_editor_absoluteX="273dp"
+        tools:layout_editor_absoluteY="400dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

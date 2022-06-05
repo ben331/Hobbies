@@ -66,6 +66,11 @@ class HomeFragment : Fragment() {
             getClubsFromUserByClubname(clubname)
         }
 
+        binding.btnNewClub.setOnClickListener{
+            val intent = Intent(activity, NewClubActivity::class.java)
+            startActivity(intent)
+        }
+
         Firebase.firestore.collection("users").document(userId).get().addOnSuccessListener {
             currentUser = it.toObject(User::class.java)!!
         }

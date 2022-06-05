@@ -1,8 +1,13 @@
 package edu.icesi.hobbies.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -14,6 +19,9 @@ class ChatActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityChatBinding
 
+    //Launchers
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::onResultNewEvent)
+
     private var chatId = ""
     private var user = ""
     private var db = Firebase.firestore
@@ -23,8 +31,14 @@ class ChatActivity : AppCompatActivity() {
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.btnNewEvent.setOnClickListener{
+            val intent = Intent(this, NewClubActivity::class.java)
+            intent.putExtra("clubId", chatId)
+            startActivity(intent)
+        }
+
         intent.getStringExtra("chatId")?.let { chatId = it }
-        intent.getStringExtra("user")?.let { user = it }
+        user = Firebase.auth.currentUser!!.uid
 
         if(chatId.isNotEmpty() && user.isNotEmpty()) {
             initViews()
@@ -64,5 +78,13 @@ class ChatActivity : AppCompatActivity() {
         db.collection("chats").document(chatId).collection("messages").document().set(message)
 
         binding.messageTextField.setText("")
+    }
+    
+    private fun onResultNewEvent(result:ActivityResult){
+        if(result.resultCode== RESULT_OK){
+            
+        }else{
+            Toast.makeText(this, "Fail to create event", Toast.LENGTH_SHORT).show()
+        }
     }
 }
