@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -61,14 +62,23 @@ class HomeActivity : AppCompatActivity() {
             }
             true
         }
+
+        showFragment(homeFragment)
     }
 
     //-----------------------------------------------   FRAGMENTS   ---------------------------------------------
     private fun showFragment(fragment: Fragment) {
+
+        //Only will visible in some future fragments
+        if(true){
+            binding.toolbar.visibility = View.GONE
+        }
+
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragmentContainer, fragment)
         transaction.commit()
     }
+
 
     //-----------------------------------------------   TOOL BAR   ----------------------------------------------
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -81,6 +91,7 @@ class HomeActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(menu)
     }
+
 
     //-----------------------------------------------   PERMISSIONS   ---------------------------------------------
     private fun requestLocationPermissions(){

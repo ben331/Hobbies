@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.collections.ArrayList
 
 class HomeFragment : Fragment() {
 
@@ -78,6 +79,7 @@ class HomeFragment : Fragment() {
             Toast.makeText(activity, "Fail to load home", Toast.LENGTH_SHORT).show()
         }
 
+        getClubsfromUser()
 
         return view
     }
@@ -89,17 +91,22 @@ class HomeFragment : Fragment() {
         }
         val query = Firebase.firestore.collection("users").document(userId).collection("clubs")
         query.get().addOnCompleteListener { task ->
+
+            var clubs:ArrayList<Club> = ArrayList()
             if(task.result?.size() != 0){
                 for(document in task.result!!){
                     val club = document.toObject(Club::class.java)
                     lifecycleScope.launch(Dispatchers.IO){
                         withContext(Dispatchers.Main){
                             if(club.name.startsWith(clubName.lowercase())){
-                                adapter.addClub(club)
+                                clubs.add(club)
                             }
                         }
                     }
                 }
+
+                adapter.refreshClubs(clubs)
+
             }else{
                 Toast.makeText(activity ,"Actualmente no tienes clubes", Toast.LENGTH_LONG).show()
             }
@@ -122,6 +129,9 @@ class HomeFragment : Fragment() {
                         }
                     }
                 }
+                binding.welcomeText.visibility = View.GONE
+            }else{
+                binding.welcomeText.visibility = View.VISIBLE
             }
         }
     }
@@ -137,7 +147,7 @@ class HomeFragment : Fragment() {
 
     private fun clubSelected(club: Club){
         val intent = Intent(activity, ChatActivity::class.java)
-        intent.putExtra("clubId", club.id)
+        intent.putExtra("chatId", club.id)
         intent.putExtra("user", userId)
         startActivity(intent)
     }
@@ -151,7 +161,6 @@ class HomeFragment : Fragment() {
 
         val intent = Intent(activity, ChatActivity::class.java)
         intent.putExtra("chatId", club.id)
-        intent.putExtra("user", userId)
         startActivity(intent)
     }
 }

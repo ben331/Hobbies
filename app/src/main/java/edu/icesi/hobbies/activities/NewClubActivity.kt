@@ -54,8 +54,8 @@ class NewClubActivity : AppCompatActivity() {
             }else{
                 val hobby = Hobby(UUID.randomUUID().toString(),hobbyName, "")
                 val clubId = UUID.randomUUID().toString()
-                val admin =  Admin(currentUser.id,currentUser.name,currentUser.birthday,currentUser.email,clubId)
-                val club = Club(clubId,name,hobby, admin)
+                val adminId = currentUser.id
+                val club = Club(clubId,name,hobby,adminId)
 
                 Firebase.firestore.collection("users").document(currentUser.id).collection("clubs").document(clubId).set(club).addOnSuccessListener {
                     finish()

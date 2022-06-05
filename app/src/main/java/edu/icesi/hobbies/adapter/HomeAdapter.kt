@@ -8,7 +8,7 @@ import edu.icesi.hobbies.model.Club
 
 class HomeAdapter(val chatClick:(Club) -> Unit): RecyclerView.Adapter<HomeViewHolder>() {
 
-    private val clubs=ArrayList<Club>()
+    private var clubs=ArrayList<Club>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
         var inflater = LayoutInflater.from(parent.context)
@@ -30,5 +30,11 @@ class HomeAdapter(val chatClick:(Club) -> Unit): RecyclerView.Adapter<HomeViewHo
     }
     fun addClub(club: Club){
         this.clubs.add(club)
+        notifyItemInserted(clubs.size -1)
+    }
+
+    fun refreshClubs(clubs:ArrayList<Club>){
+        this.clubs = clubs
+        notifyDataSetChanged()
     }
 }

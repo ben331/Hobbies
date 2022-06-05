@@ -10,9 +10,14 @@ import kotlinx.android.synthetic.main.item_message.view.*
 
 class MessageAdapter(private val user: String): RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
 
-    private var messages: List<Message> = emptyList()
+    private var messages: ArrayList<Message> = ArrayList()
 
-    fun setData(list: List<Message>){
+    fun addMessage(message:Message){
+        messages.add(message)
+        notifyItemInserted(messages.size - 1)
+    }
+
+    fun setData(list: ArrayList<Message>){
         messages = list
         notifyDataSetChanged()
     }
