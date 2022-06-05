@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import edu.icesi.hobbies.R
-import edu.icesi.hobbies.modules.Hobbie
+import edu.icesi.hobbies.model.Hobby
 
 class HobbieAdapter: RecyclerView.Adapter<HobbieViewHolder>() {
 
-    private val hobbies=ArrayList<Hobbie>()
+    private val hobbies=ArrayList<Hobby>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HobbieViewHolder {
         var inflater = LayoutInflater.from(parent.context)
@@ -25,7 +25,7 @@ class HobbieAdapter: RecyclerView.Adapter<HobbieViewHolder>() {
     override fun getItemCount(): Int {
         return hobbies.size
     }
-    fun addHobbie(hobbie: Hobbie){
+    fun addHobbie(hobbie: Hobby){
         this.hobbies.add(hobbie)
     }
 }

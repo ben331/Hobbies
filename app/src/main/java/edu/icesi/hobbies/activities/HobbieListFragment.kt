@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import edu.icesi.hobbies.R
 import edu.icesi.hobbies.databinding.FragmentHobbieListBinding
-import edu.icesi.hobbies.modules.Hobbie
+import edu.icesi.hobbies.model.Hobby
 
 class HobbieListFragment : Fragment() {
     private var _binding: FragmentHobbieListBinding?=null
@@ -40,7 +40,7 @@ class HobbieListFragment : Fragment() {
         fun newInstance() = HobbieListFragment()
     }
     fun onNewHobbie(id:String, name:String, image: String) {
-        val newHobbie = Hobbie(id,name,image)
+        val newHobbie = Hobby(id,name,image)
         adapter.addHobbie(newHobbie)
     }
 

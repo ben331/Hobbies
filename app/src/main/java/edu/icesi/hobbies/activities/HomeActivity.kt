@@ -61,12 +61,6 @@ class HomeActivity : AppCompatActivity() {
             }
             true
         }
-
-        intent.getSerializableExtra("user") as User
-
-        if(user.isNotEmpty()) {
-            initViews();
-        }
     }
 
     //-----------------------------------------------   FRAGMENTS   ---------------------------------------------
@@ -138,60 +132,4 @@ class HomeActivity : AppCompatActivity() {
         }
         return true
     }
-
-    private fun initViews(){
-        binding.newChatBtn.setOnClickListener{ newChat()}
-
-        binding.listChatsRecyclerView.layoutManager = LinearLayoutManager(this)
-        binding.listChatsRecyclerView.adapter = ChatAdapter { chat->
-            chatSelected(chat)
-        }
-        val userRef = db.collection("users").document(user)
-
-        userRef.collection("chats")
-            .get()
-            .addOnSuccessListener { chats ->
-                val listChats = chats.toObjects(Chat::class.java)
-                (binding.listChatsRecyclerView.adapter as ChatAdapter).setData(listChats)
-            }
-        userRef.collection("chats")
-            .addSnapshotListener { chats, error ->
-                if(error == null){
-                    chats?.let {
-                        val listChats = it.toObjects(Chat::class.java)
-                        (binding.listChatsRecyclerView.adapter as ChatAdapter).setData(listChats)
-                    }
-                }
-            }
-    }
-
-    private fun chatSelected(chat: Chat){
-        val intent = Intent(this, ChatActivity::class.java)
-        intent.putExtra("chatId", chat.id)
-        intent.putExtra("user", user)
-        startActivity(intent)
-    }
-
-    private fun newChat(){
-        val chatId = UUID.randomUUID().toString()
-        val otherChat = binding.otherChatET.text.toString()
-        val users = listOf(user,otherChat)
-
-        val chat = Chat(
-            id = chatId,
-            name = "chat con $otherChat",
-            users = users
-        )
-
-        db.collection("chats").document(chatId).set(chat)
-        db.collection("users").document(user).collection("chats").document(chatId).set(chat)
-        db.collection("users").document(otherChat).collection("chats").document(chatId).set(chat)
-
-        val intent = Intent(this, ChatActivity::class.java)
-        intent.putExtra("chatId", chatId)
-        intent.putExtra("user", user)
-        startActivity(intent)
-
-    }
-
 }
