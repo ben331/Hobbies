@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import edu.icesi.hobbies.R
+import edu.icesi.hobbies.adapter.HomeAdapter
 import edu.icesi.hobbies.databinding.FragmentHobbieListBinding
 import edu.icesi.hobbies.model.Hobby
 
@@ -14,7 +14,7 @@ class HobbieListFragment : Fragment() {
     private var _binding: FragmentHobbieListBinding?=null
     private val binding get() =_binding!!
     //STATE
-    private var adapter = HobbieAdapter()
+    private var adapter = HomeAdapter()
 
 
     override fun onCreateView(

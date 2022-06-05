@@ -9,13 +9,14 @@ open class User(): Serializable{
     var email:String = "Dummy"
     var birthday: String = "Dummy"
     var profileURI:String = ""
+    var coverURI:String = ""
 
     lateinit var contacts:ArrayList<User>
     lateinit var hobbies:ArrayList<Hobby>
     lateinit var clubs:ArrayList<Club>
     lateinit var requestBox:Chat
 
-    constructor(id:String, name:String, birthday:String, email:String) : this() {
+    constructor(id:String, name:String, birthday:String, email:String,profileURI:String,coverURI:String) : this() {
         this.id = id
         this.name = name
         this.email = email
@@ -24,5 +25,7 @@ open class User(): Serializable{
         this.hobbies = ArrayList()
         this.clubs = ArrayList()
         requestBox = Chat()
+        this.profileURI=profileURI
+        this.coverURI=coverURI
     }
 }

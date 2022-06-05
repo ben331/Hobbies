@@ -1,13 +1,15 @@
 package edu.icesi.hobbies.model
 
-class Club(id:String, name:String, hobby:Hobby, admin:Admin){
+import java.io.Serializable
 
-    private var id:String = id
-    private var name:String = name
-    private var hobby:Hobby = hobby
-    private var users:ArrayList<User> = ArrayList()
-    private var admin:Admin = admin
-    private var chat:Chat = Chat()
-    private var events:ArrayList<Event> = ArrayList()
+data class Club(
 
-}
+    private val id:String = "",
+    private var name:String = "",
+    private var hobby:Hobby,
+    private var users:ArrayList<User> = ArrayList(),
+    private var admin:Admin ,
+    private var chat:Chat = Chat(),
+    private var events:ArrayList<Event> = ArrayList(),
+    private var image:String="",
+) :Serializable
