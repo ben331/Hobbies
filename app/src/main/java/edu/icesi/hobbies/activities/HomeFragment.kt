@@ -7,20 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.ktx.Firebase
-import edu.icesi.hobbies.R
 import edu.icesi.hobbies.adapter.HomeAdapter
 import edu.icesi.hobbies.databinding.FragmentHomeBinding
 import edu.icesi.hobbies.model.Club
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import edu.icesi.hobbies.adapters.ChatAdapter
-import edu.icesi.hobbies.databinding.FragmentHomeBinding
 import edu.icesi.hobbies.model.Chat
 import edu.icesi.hobbies.model.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class HomeFragment : Fragment() {
@@ -34,6 +34,9 @@ class HomeFragment : Fragment() {
 
     //Vars
     private var userId = Firebase.auth.currentUser?.uid!!
+    private lateinit var adapter:HomeAdapter
+    private lateinit var currentUser:User
+    private lateinit var username:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,43 +46,40 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        //STATE
-        private var adapter = HomeAdapter()
-        private var _binding: FragmentHomeBinding?=null
-        private val binding get() =_binding!!
-        private var username:String? = null
-        override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
-        
-        initViews()
-        return binding.root
-    }
-
-    ): View? {
         _binding = FragmentHomeBinding.inflate(inflater,container, false)
         val view = binding.root
-        username= intent.extras?.getString("username")
         //recrear el estado
         val clubRecycler = binding.clubRecycler
         clubRecycler.setHasFixedSize(true)
         clubRecycler.layoutManager = LinearLayoutManager(activity)
 
         clubRecycler.adapter = adapter
+
+        adapter = HomeAdapter { club->
+            clubSelected(club)
+        }
+
+        binding.clubRecycler.adapter = adapter
+
         binding.btnBuscarGrupos.setOnClickListener {
             val clubname = binding.searchClub.text.toString().lowercase()
             getClubsFromUserByClubname(clubname)
         }
+
+        Firebase.firestore.collection("users").document(userId).get().addOnSuccessListener {
+            currentUser = it.toObject(User::class.java)!!
+        }
+        username = currentUser.name
+
         return view
     }
     private fun getClubsFromUserByClubname(clubName: String){
-        lifecycleScope.launch(Dispatchers.IO){
+        lifecycleScope.launch (Dispatchers.IO){
             withContext(Dispatchers.Main){
-                adapter.clean()
+                //adapter.clean()
             }
         }
-        val query = Firebase.firestore.collection("clubs").whereEqualTo("username", username)
+        val query = Firebase.firestore.collection("users").document(userId).collection("clubs")
         query.get().addOnCompleteListener { task ->
             if(task.result?.size() != 0){
                 for(document in task.result!!){
@@ -93,17 +93,17 @@ class HomeFragment : Fragment() {
                     }
                 }
             }else{
-                Toast.makeText(getApplicationContext(); ,"Actualmente no tienes clubes", Toast.LENGTH_LONG).show()
+                Toast.makeText(activity ,"Actualmente no tienes clubes", Toast.LENGTH_LONG).show()
             }
         }
     }
     private fun getClubsfromUser(){
         lifecycleScope.launch(Dispatchers.IO){
             withContext(Dispatchers.Main){
-                adapter.clean()
+                //adapter.clean()
             }
         }
-        val query = Firebase.firestore.collection("clubs").whereEqualTo("user", username)
+        val query = Firebase.firestore.collection("users").document(userId).collection("clubs")
         query.get().addOnCompleteListener { task ->
             if(task.result?.size() != 0){
                 for(document in task.result!!){
@@ -121,63 +121,29 @@ class HomeFragment : Fragment() {
         getClubsfromUser()
         super.onStart()
     }
+
     companion object {
         @JvmStatic
         fun newInstance() = HomeFragment()
     }
 
-    private fun initViews(){
-        binding.newChatBtn.setOnClickListener{ newChat()}
-
-        binding.listChatsRecyclerView.layoutManager = LinearLayoutManager(activity)
-        binding.listChatsRecyclerView.adapter = ChatAdapter { chat->
-            chatSelected(chat)
-        }
-        val userRef = db.collection("users").document(userId)
-
-        userRef.collection("chats")
-            .get()
-            .addOnSuccessListener { chats ->
-                val listChats = chats.toObjects(Chat::class.java)
-                (binding.listChatsRecyclerView.adapter as ChatAdapter).setData(listChats)
-            }
-        userRef.collection("chats")
-            .addSnapshotListener { chats, error ->
-                if(error == null){
-                    chats?.let {
-                        val listChats = it.toObjects(Chat::class.java)
-                        (binding.listChatsRecyclerView.adapter as ChatAdapter).setData(listChats)
-                    }
-                }
-            }
-    }
-
-    private fun chatSelected(chat: Chat){
+    private fun clubSelected(club: Club){
         val intent = Intent(activity, ChatActivity::class.java)
-        intent.putExtra("chatId", chat.id)
+        intent.putExtra("clubId", club.id)
         intent.putExtra("user", userId)
         startActivity(intent)
     }
 
-    private fun newChat(){
-        val chatId = UUID.randomUUID().toString()
-        val otherChat = binding.otherChatET.text.toString()
+    private fun newClub(club:Club){
+        val otherChat = binding.searchClub.text.toString()
         val users = listOf(userId,otherChat)
 
-        val chat = Chat(
-            id = chatId,
-            name = "chat con $otherChat",
-            users = users
-        )
-
-        db.collection("chats").document(chatId).set(chat)
-        db.collection("users").document(userId).collection("chats").document(chatId).set(chat)
-        db.collection("users").document(otherChat).collection("chats").document(chatId).set(chat)
+        db.collection("clubs").document(club.id).set(club)
+        db.collection("users").document(userId).collection("clubs").document(club.id).set(club)
 
         val intent = Intent(activity, ChatActivity::class.java)
-        intent.putExtra("chatId", chatId)
+        intent.putExtra("chatId", club.id)
         intent.putExtra("user", userId)
         startActivity(intent)
-
     }
 }

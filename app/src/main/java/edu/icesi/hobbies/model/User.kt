@@ -16,7 +16,7 @@ open class User(): Serializable{
     lateinit var clubs:ArrayList<Club>
     lateinit var requestBox:Chat
 
-    constructor(id:String, name:String, birthday:String, email:String,profileURI:String,coverURI:String) : this() {
+    constructor(id:String, name:String, email:String, birthday:String) : this() {
         this.id = id
         this.name = name
         this.email = email
@@ -25,7 +25,5 @@ open class User(): Serializable{
         this.hobbies = ArrayList()
         this.clubs = ArrayList()
         requestBox = Chat()
-        this.profileURI=profileURI
-        this.coverURI=coverURI
     }
 }

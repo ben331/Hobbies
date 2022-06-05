@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import edu.icesi.hobbies.R
 import edu.icesi.hobbies.model.Club
 
-class HomeAdapter: RecyclerView.Adapter<HomeViewHolder>() {
+class HomeAdapter(val chatClick:(Club) -> Unit): RecyclerView.Adapter<HomeViewHolder>() {
 
     private val clubs=ArrayList<Club>()
 
@@ -19,6 +19,10 @@ class HomeAdapter: RecyclerView.Adapter<HomeViewHolder>() {
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val clubN=clubs[position]
         holder.clubName.text=clubN.name
+
+        holder.itemView.setOnClickListener{
+            chatClick(clubs[position])
+        }
     }
 
     override fun getItemCount(): Int {
