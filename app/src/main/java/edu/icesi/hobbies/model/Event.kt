@@ -2,6 +2,8 @@ package edu.icesi.hobbies.model
 
 import com.google.android.gms.maps.model.LatLng
 import java.io.Serializable
+import java.time.LocalDate
+import java.util.*
 
 data class Event(
     val id:String="",
@@ -13,6 +15,10 @@ data class Event(
 
     //Event GSC
     val lat:Double,
-    val lng:Double
+    val lng:Double,
 
+    //
+    val description:String="",
+    val date:LocalDate,
+    val participants:Int=0
     ):Serializable

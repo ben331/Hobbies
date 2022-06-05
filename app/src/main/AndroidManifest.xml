@@ -20,6 +20,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hobbies">
         <activity
+            android:name=".activities.NewEventActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.NewClubActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.EventFormActivity"
             android:exported="false" />
         <activity
