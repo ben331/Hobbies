@@ -56,6 +56,13 @@ class NewClubActivity : AppCompatActivity() {
                 val clubId = UUID.randomUUID().toString()
                 val admin =  Admin(currentUser.id,currentUser.name,currentUser.birthday,currentUser.email,clubId)
                 val club = Club(clubId,name,hobby, admin)
+
+                Firebase.firestore.collection("users").document(currentUser.id).collection("clubs").document(clubId).set(club).addOnSuccessListener {
+                    finish()
+                }.addOnFailureListener{
+                    Toast.makeText(this,it.message, Toast.LENGTH_LONG).show()
+                }
+
                 Firebase.firestore.collection("clubs").document(clubId).set(club).addOnSuccessListener {
                     finish()
                 }.addOnFailureListener{

@@ -54,6 +54,10 @@ class ProfileFragment : Fragment() {
             photo=2
             openFileChooser()
         }
+        binding.logoutBtn.setOnClickListener {
+            //
+            activity?.finish()
+        }
         val thread = Thread {
             try {
                 //var drawProfile = LoadImageFromWebOperationsProfle(user.profileURI)
@@ -94,8 +98,15 @@ class ProfileFragment : Fragment() {
     }
     override fun onStart() {
         super.onStart()
-        binding.dateView.text=user.birthday
-        binding.emailView.text=user.email
+
+        val userId = Firebase.auth.currentUser?.uid!!
+        Firebase.firestore.collection("users").document(userId).get().addOnSuccessListener {
+            user = it.toObject(User::class.java)!!
+            binding.dateView.text=user.birthday
+            binding.emailView.text=user.email
+        }.addOnFailureListener{
+            Log.e("Death", "Death")
+        }
     }
     private fun uploadFile(){
         val filename= UUID.randomUUID().toString()

@@ -31,6 +31,9 @@
         <activity
             android:name=".activities.LocationActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.ChatActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

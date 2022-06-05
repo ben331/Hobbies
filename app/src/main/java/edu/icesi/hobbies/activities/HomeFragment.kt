@@ -53,11 +53,11 @@ class HomeFragment : Fragment() {
         clubRecycler.setHasFixedSize(true)
         clubRecycler.layoutManager = LinearLayoutManager(activity)
 
-        clubRecycler.adapter = adapter
-
         adapter = HomeAdapter { club->
             clubSelected(club)
         }
+
+        clubRecycler.adapter = adapter
 
         binding.clubRecycler.adapter = adapter
 
@@ -73,8 +73,11 @@ class HomeFragment : Fragment() {
 
         Firebase.firestore.collection("users").document(userId).get().addOnSuccessListener {
             currentUser = it.toObject(User::class.java)!!
+            username = currentUser.name
+        }.addOnFailureListener{
+            Toast.makeText(activity, "Fail to load home", Toast.LENGTH_SHORT).show()
         }
-        username = currentUser.name
+
 
         return view
     }

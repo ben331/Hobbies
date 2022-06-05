@@ -5,6 +5,6 @@ import java.io.Serializable
 data class Club(
     val id:String = "",
     var name:String = "",
-    var hobby:Hobby,
-    var admin:Admin ,
+    var hobby:Hobby?=null,
+    var admin:Admin?=null
 ) :Serializable

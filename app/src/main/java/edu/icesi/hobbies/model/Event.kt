@@ -18,6 +18,6 @@ data class Event(
 
     //
     val description:String="",
-    val date:LocalDate,
+    val date:LocalDate?=null,
     val participants:Int=0
     ):Serializable

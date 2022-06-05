@@ -31,14 +31,17 @@ class ChatActivity : AppCompatActivity() {
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        intent.getStringExtra("chatId")?.let { chatId = it }
+        user = Firebase.auth.currentUser!!.uid
+
+        binding.messagesRecylerView.adapter = MessageAdapter(user)
+
         binding.btnNewEvent.setOnClickListener{
             val intent = Intent(this, NewClubActivity::class.java)
             intent.putExtra("clubId", chatId)
             startActivity(intent)
         }
-
-        intent.getStringExtra("chatId")?.let { chatId = it }
-        user = Firebase.auth.currentUser!!.uid
 
         if(chatId.isNotEmpty() && user.isNotEmpty()) {
             initViews()

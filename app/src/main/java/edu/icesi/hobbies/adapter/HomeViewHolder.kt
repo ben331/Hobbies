@@ -8,7 +8,7 @@ import edu.icesi.hobbies.R
 
 class HomeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    var clubName : TextView = itemView.findViewById(R.id.imageHobbie)
-    var clubImage: ImageView =  itemView.findViewById(R.id.name_hobbie)
+    var clubImage : ImageView = itemView.findViewById(R.id.imageHobbie)
+    var clubName: TextView =  itemView.findViewById(R.id.name_hobbie)
 
 }
