@@ -11,15 +11,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import edu.icesi.hobbies.R
-import edu.icesi.hobbies.adapters.ChatAdapter
 import edu.icesi.hobbies.databinding.ActivityHomeBinding
-import edu.icesi.hobbies.model.Chat
-import edu.icesi.hobbies.model.User
-import java.util.*
 
 class HomeActivity : AppCompatActivity() {
 

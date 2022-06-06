@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.NewClubActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <EditText
         android:id="@+id/editText_club_name"
@@ -30,35 +29,50 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
+        android:autofillHints=""
         android:ems="10"
-        android:hint="Hibbie"
+        android:hint="Hobby"
         android:inputType="textPersonName"
         android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_club_name"
-        android:autofillHints="" />
+        app:layout_constraintTop_toBottomOf="@+id/editText_club_name" />
 
     <ImageView
         android:id="@+id/img_club"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginTop="64dp"
+        android:contentDescription="TODO"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/gallery"
         tools:ignore="ImageContrastCheck"
-        tools:src="@tools:sample/avatars"
-        android:contentDescription="TODO" />
+        tools:src="@drawable/gallery" />
+
+    <Button
+        android:id="@+id/btnAdd"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="-20dp"
+        android:layout_marginTop="-20dp"
+        android:text="+"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/img_club"
+        app:layout_constraintTop_toBottomOf="@+id/img_club" />
 
     <Button
         android:id="@+id/btn_club_create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
-        android:text="Button"
+        android:text="Create"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText_club_hobbie" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

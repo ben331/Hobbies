@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -16,10 +17,17 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import edu.icesi.hobbies.R
 import edu.icesi.hobbies.databinding.FragmentMapsBinding
+import edu.icesi.hobbies.model.Club
+import edu.icesi.hobbies.model.Event
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MapsFragment(private val isOnlySelector:Boolean) : Fragment() {
 
@@ -37,6 +45,9 @@ class MapsFragment(private val isOnlySelector:Boolean) : Fragment() {
     //Binding
     private var _binding: FragmentMapsBinding? = null
     private val binding get() = _binding!!
+
+    //Firebase
+    private var db = Firebase.firestore
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,6 +95,12 @@ class MapsFragment(private val isOnlySelector:Boolean) : Fragment() {
         setInitialPos()
     }
 
+    fun loadEvents(){
+        val events: ArrayList<Event> = ArrayList()
+
+
+    }
+
     private fun putMarket(lat:Double, lng:Double): Marker?{
         val pos = LatLng(lat, lng)
         return mMap.addMarker(MarkerOptions().position(pos).snippet(idMarker))
@@ -96,7 +113,7 @@ class MapsFragment(private val isOnlySelector:Boolean) : Fragment() {
         if(gsc!=null){
             pos = LatLng(gsc.latitude, gsc.longitude)
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(pos))
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(pos))
     }
 
     interface OnClickMarkerListener{

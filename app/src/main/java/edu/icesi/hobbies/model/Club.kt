@@ -6,5 +6,6 @@ data class Club(
     val id:String = "",
     var name:String = "",
     var hobby:Hobby?=null,
-    var adminId:String=""
+    var adminId:String="",
+    var imageUri:String=""
 ) :Serializable

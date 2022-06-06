@@ -6,14 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import edu.icesi.hobbies.databinding.ActivityNewClubBinding
 import edu.icesi.hobbies.databinding.ActivityNewEventBinding
-import edu.icesi.hobbies.databinding.FragmentNewEventBinding
 import edu.icesi.hobbies.model.Club
 import edu.icesi.hobbies.model.Event
 import kotlinx.android.synthetic.main.fragment_live_map.*
@@ -78,7 +75,7 @@ class NewEventActivity : AppCompatActivity() {
                     setResult(Activity.RESULT_OK, intent)
                     finish()
                 }.addOnFailureListener{
-
+                    Toast.makeText(this,"Fail to upload event",Toast.LENGTH_LONG).show()
                 }
                 
             }catch (e:Exception){

@@ -58,6 +58,7 @@ dependencies {
     implementation("com.android.volley:volley:1.2.1")
     implementation 'com.google.firebase:firebase-firestore:24.1.2'
     implementation 'com.google.firebase:firebase-storage:20.0.1'
+    implementation 'com.firebaseui:firebase-ui-storage:7.2.0'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.1.1'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1")

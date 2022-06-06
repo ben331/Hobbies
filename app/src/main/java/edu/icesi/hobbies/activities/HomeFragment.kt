@@ -1,30 +1,39 @@
 package edu.icesi.hobbies.activities
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.ImageRequest
+import com.android.volley.toolbox.Volley
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import edu.icesi.hobbies.adapter.HomeAdapter
 import edu.icesi.hobbies.databinding.FragmentHomeBinding
 import edu.icesi.hobbies.model.Club
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import edu.icesi.hobbies.adapters.ChatAdapter
-import edu.icesi.hobbies.model.Chat
 import edu.icesi.hobbies.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
-import kotlin.collections.ArrayList
 
-class HomeFragment : Fragment() {
+
+class HomeFragment : Fragment(), HomeAdapter.OnLoadImageListener {
 
     //Firebase
     private var db = Firebase.firestore
@@ -39,6 +48,9 @@ class HomeFragment : Fragment() {
     private lateinit var currentUser:User
     private lateinit var username:String
 
+    //RequestQueue of Volley
+    private lateinit var queue : RequestQueue
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -49,6 +61,10 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater,container, false)
         val view = binding.root
+
+        //Initialize Volley Queue
+        queue = Volley.newRequestQueue(activity)
+
         //recrear el estado
         val clubRecycler = binding.clubRecycler
         clubRecycler.setHasFixedSize(true)
@@ -58,13 +74,46 @@ class HomeFragment : Fragment() {
             clubSelected(club)
         }
 
+        //Subscribe to adapter listener to load images
+        adapter.listener = this
+
         clubRecycler.adapter = adapter
 
         binding.clubRecycler.adapter = adapter
 
+        //Listener on Editext
+        binding.searchClub.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable) {}
+
+            override fun beforeTextChanged(s: CharSequence, start: Int,
+                                           count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int,
+                                       before: Int, count: Int) {
+                val clubname = binding.searchClub.text.toString().lowercase()
+                getClubsFromUserByClubname(clubname)
+            }
+        })
+
         binding.btnBuscarGrupos.setOnClickListener {
-            val clubname = binding.searchClub.text.toString().lowercase()
-            getClubsFromUserByClubname(clubname)
+            binding.searchClub.visibility = View.VISIBLE
+            binding.btnBuscarGrupos.visibility = View.GONE
+            binding.btnCloseSearch.visibility = View.VISIBLE
+        }
+
+        binding.btnCloseSearch.setOnClickListener {
+            binding.searchClub.setText("")
+
+            binding.searchClub.let { v ->
+                val imm = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
+                imm?.hideSoftInputFromWindow(v.windowToken, 0)
+            }
+
+            binding.searchClub.visibility = View.GONE
+            binding.btnBuscarGrupos.visibility = View.VISIBLE
+            binding.btnCloseSearch.visibility = View.GONE
         }
 
         binding.btnNewClub.setOnClickListener{
@@ -137,8 +186,12 @@ class HomeFragment : Fragment() {
         }
     }
     override fun onStart() {
-        getClubsfromUser()
         super.onStart()
+        getClubsfromUser()
+    }
+    override fun onResume(){
+        super.onResume()
+        getClubsfromUser()
     }
 
     companion object {
@@ -163,5 +216,18 @@ class HomeFragment : Fragment() {
         val intent = Intent(activity, ChatActivity::class.java)
         intent.putExtra("chatId", club.id)
         startActivity(intent)
+    }
+
+    override fun downloadImage(url: String?, img: ImageView) {
+        if(url!=null && url!="null" && url!=""){
+            Log.e("Error>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", url)
+
+            val imgRequest = ImageRequest( url,{ bitmap->
+                img.setImageBitmap(bitmap)
+            },0,0, ImageView.ScaleType.CENTER, Bitmap.Config.ARGB_8888, {
+                Log.e(">>>>>>>>>>>>", "Faile to load image of club")
+            })
+            queue.add(imgRequest)
+        }
     }
 }

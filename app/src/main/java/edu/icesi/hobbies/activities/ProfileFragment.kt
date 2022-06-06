@@ -1,5 +1,6 @@
 package edu.icesi.hobbies.activities
 
+import android.Manifest
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -34,7 +35,7 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentProfileBinding.inflate(inflater,container,false)
         val view = binding.root
 
@@ -44,7 +45,6 @@ class ProfileFragment : Fragment() {
         }.addOnFailureListener{
             Log.e("Death", "Death")
         }
-
 
         binding.profilePhoto.setOnClickListener{
             photo=1
@@ -60,10 +60,10 @@ class ProfileFragment : Fragment() {
         }
         val thread = Thread {
             try {
-                //var drawProfile = LoadImageFromWebOperationsProfle(user.profileURI)
-                //var drawcoverProfile = LoadImageFromWebOperationsCover(user.coverURI)
-                //binding.profilePhoto.setImageDrawable(drawProfile)
-                //binding.coverPhoto.setImageDrawable(drawcoverProfile)
+                val drawProfile = LoadImageFromWebOperationsProfle(user.profileURI)
+                val drawcoverProfile = LoadImageFromWebOperationsCover(user.coverURI)
+                binding.profilePhoto.setImageDrawable(drawProfile)
+                binding.coverPhoto.setImageDrawable(drawcoverProfile)
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
@@ -86,11 +86,11 @@ class ProfileFragment : Fragment() {
             val bitmapD= BitmapDrawable(bitmap)
             if(photo==1){
                 user.profileURI=mImageUri.toString()
-                binding.profilePhoto?.setBackgroundDrawable(bitmapD)
+                binding.profilePhoto.setBackgroundDrawable(bitmapD)
                 uploadFile()
             }else{
                 user.coverURI=mImageUri.toString()
-                binding.coverPhoto?.setBackgroundDrawable(bitmapD)
+                binding.coverPhoto.setBackgroundDrawable(bitmapD)
                 uploadFile()
             }
 

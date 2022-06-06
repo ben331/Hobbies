@@ -47,6 +47,7 @@ class LiveMapFragment : Fragment (), MapsFragment.OnClickMarkerListener {
         //Subscribe listener
         mapsFragment.listener = this
 
+        mapsFragment.loadEvents()
         return binding.root
     }
 
