@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.lifecycleScope
+import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -21,11 +21,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import edu.icesi.hobbies.R
 import edu.icesi.hobbies.databinding.FragmentMapsBinding
-import edu.icesi.hobbies.model.Club
 import edu.icesi.hobbies.model.Event
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -45,9 +41,6 @@ class MapsFragment(private val isOnlySelector:Boolean) : Fragment() {
     //Binding
     private var _binding: FragmentMapsBinding? = null
     private val binding get() = _binding!!
-
-    //Firebase
-    private var db = Firebase.firestore
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,7 +69,7 @@ class MapsFragment(private val isOnlySelector:Boolean) : Fragment() {
                 if(eventMarker!=null){
                     eventMarker?.position = pos
                 }else{
-                    eventMarker = putMarket(pos.latitude, pos.longitude)
+                    eventMarker = putMarker(pos.latitude, pos.longitude)
                 }
             }else{
                 listener.hideEventInfo()
@@ -86,8 +79,7 @@ class MapsFragment(private val isOnlySelector:Boolean) : Fragment() {
         //Click on marker--------------------------------------------------------------------------
         mMap.setOnMarkerClickListener {marker->
             if(!isOnlySelector){
-                idMarker = marker.snippet!!
-                listener.showEventInfo(idMarker)
+                listener.showEventInfo(marker.snippet!!)
             }
             true
         }
@@ -96,14 +88,24 @@ class MapsFragment(private val isOnlySelector:Boolean) : Fragment() {
     }
 
     fun loadEvents(){
-        val events: ArrayList<Event> = ArrayList()
-
-
+        Firebase.firestore.collection("events").get().addOnSuccessListener {
+            for(task in it){
+                val event = task.toObject(Event::class.java)
+                putMarker(event.lat, event.lon, event.id)
+            }
+        }.addOnFailureListener{
+            Toast.makeText(activity, "Failed to load events", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    private fun putMarket(lat:Double, lng:Double): Marker?{
+    private fun putMarker(lat:Double, lng:Double): Marker?{
         val pos = LatLng(lat, lng)
-        return mMap.addMarker(MarkerOptions().position(pos).snippet(idMarker))
+        return mMap.addMarker(MarkerOptions().position(pos))
+    }
+
+    private fun putMarker(lat:Double, lng:Double, id:String): Marker?{
+        val pos = LatLng(lat, lng)
+        return mMap.addMarker(MarkerOptions().position(pos).snippet(id))
     }
 
     @SuppressLint("MissingPermission")

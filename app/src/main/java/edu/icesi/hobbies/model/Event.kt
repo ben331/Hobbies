@@ -3,7 +3,6 @@ package edu.icesi.hobbies.model
 import com.google.android.gms.maps.model.LatLng
 import java.io.Serializable
 import java.time.LocalDate
-import java.util.*
 
 data class Event(
     val id:String="",
@@ -14,10 +13,13 @@ data class Event(
     val chatClubId:String="",
 
     //Event GSC
-    val pos:LatLng? = null,
+    val lat:Double=0.0,
+    val lon:Double=0.0,
 
     //
     val description:String="",
-    val date:LocalDate?=null,
+    val day:Int=0,
+    val month:Int= 0,
+    val year:Int = 0,
     val participants:Int=0
     ):Serializable

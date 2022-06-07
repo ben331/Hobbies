@@ -2,7 +2,6 @@ package edu.icesi.hobbies.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -64,9 +63,5 @@ class LocationActivity : AppCompatActivity() {
 
         //Instructions---------------------------------------------------------------
         Toast.makeText(this, "Touch to select location", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showAlert(msg:String){
-
     }
 }

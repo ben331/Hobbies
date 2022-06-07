@@ -11,8 +11,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import edu.icesi.hobbies.R
 import edu.icesi.hobbies.databinding.ActivityHomeBinding
 
@@ -29,8 +27,6 @@ class HomeActivity : AppCompatActivity() {
 
     //Vars
     private var haveLocationPermissions = false
-    private var db = Firebase.firestore
-    private var user = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,9 +61,9 @@ class HomeActivity : AppCompatActivity() {
     private fun showFragment(fragment: Fragment) {
 
         //Only will visible in some future fragments
-        if(true){
+        //if(true){
             binding.toolbar.visibility = View.GONE
-        }
+        //}
 
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragmentContainer, fragment)

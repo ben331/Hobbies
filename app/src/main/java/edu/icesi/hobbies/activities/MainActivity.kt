@@ -3,8 +3,6 @@ package edu.icesi.hobbies.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -29,11 +27,10 @@ class MainActivity : AppCompatActivity() {
 
             Firebase.auth.signInWithEmailAndPassword(email,password).addOnSuccessListener {
 
-                val fbuser = Firebase.auth.currentUser
+                val fbUser = Firebase.auth.currentUser
 
-                if(fbuser!!.isEmailVerified){
-
-                    Firebase.firestore.collection("users").document(fbuser.uid).get().addOnSuccessListener {
+                if(fbUser!!.isEmailVerified){
+                    Firebase.firestore.collection("users").document(fbUser.uid).get().addOnSuccessListener {
                         val user = it.toObject(User::class.java)
 
                         saveUser(user!!)
@@ -41,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                         finish()
                     }
                 }else{
-                    Toast.makeText(this,"El Email no se encuentra verificado",Toast.LENGTH_LONG).show()
+                    Toast.makeText(this,"E-mail is not verified",Toast.LENGTH_LONG).show()
                 }
 
             }.addOnFailureListener{

@@ -15,6 +15,7 @@
         android:ems="10"
         android:hint="Title"
         android:inputType="textPersonName"
+        android:maxLength="80"
         android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,23 +32,52 @@
         android:gravity="start|top"
         android:hint="Description"
         android:inputType="textMultiLine"
+        android:maxLength="160"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText_event_title" />
 
     <EditText
-        android:id="@+id/editText_event_date"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:id="@+id/editText_day"
+        android:layout_width="70dp"
+        android:layout_height="42dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="16dp"
         android:ems="10"
-        android:hint="Date"
+        android:hint="Day"
         android:inputType="date"
+        android:maxLength="2"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toStartOf="@+id/editText_month"
+        app:layout_constraintTop_toBottomOf="@+id/editText_event_description" />
+
+    <EditText
+        android:id="@+id/editText_month"
+        android:layout_width="70dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="Month"
+        android:inputType="date"
+        android:maxLength="2"
         android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.46"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText_event_description" />
+
+    <EditText
+        android:id="@+id/editText_year"
+        android:layout_width="104dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="Year"
+        android:inputType="date"
+        android:maxLength="4"
+        android:minHeight="48dp"
+        app:layout_constraintStart_toEndOf="@+id/editText_month"
         app:layout_constraintTop_toBottomOf="@+id/editText_event_description" />
 
     <EditText
@@ -60,10 +90,11 @@
         android:ems="10"
         android:hint="Number of  participants"
         android:inputType="number"
+        android:maxLength="5"
         android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_event_date" />
+        app:layout_constraintTop_toBottomOf="@+id/editText_day" />
 
     <Button
         android:id="@+id/btnEvenReturn"

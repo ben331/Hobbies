@@ -1,18 +1,22 @@
 package edu.icesi.hobbies.activities
 
-import android.Manifest
+import android.app.Activity
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.ImageRequest
+import com.android.volley.toolbox.Volley
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -20,9 +24,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import edu.icesi.hobbies.databinding.FragmentProfileBinding
 import edu.icesi.hobbies.model.User
-import java.io.InputStream
-import java.net.URL
-import java.util.*
 
 class ProfileFragment : Fragment() {
     private lateinit var user: User
@@ -30,7 +31,14 @@ class ProfileFragment : Fragment() {
     private val binding get() = _binding!!
     private var mStorageRef: StorageReference? = null
     private  var mImageUri: Uri? = null
+
     private  var photo:Int ?= null
+
+    //Gallery Launchers
+    private val launcherCover = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::onActivityResult)
+
+    //Volley
+    private lateinit var queue: RequestQueue
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,12 +47,7 @@ class ProfileFragment : Fragment() {
         _binding = FragmentProfileBinding.inflate(inflater,container,false)
         val view = binding.root
 
-        val userId = Firebase.auth.currentUser?.uid!!
-        Firebase.firestore.collection("users").document(userId).get().addOnSuccessListener {
-            user = it.toObject(User::class.java)!!
-        }.addOnFailureListener{
-            Log.e("Death", "Death")
-        }
+        queue = Volley.newRequestQueue(activity)
 
         binding.profilePhoto.setOnClickListener{
             photo=1
@@ -55,90 +58,130 @@ class ProfileFragment : Fragment() {
             openFileChooser()
         }
         binding.logoutBtn.setOnClickListener {
-            //
-            activity?.finish()
+            val intent = Intent(activity, MainActivity::class.java)
+            startActivity(intent)
         }
-        val thread = Thread {
-            try {
-                val drawProfile = LoadImageFromWebOperationsProfle(user.profileURI)
-                val drawcoverProfile = LoadImageFromWebOperationsCover(user.coverURI)
-                binding.profilePhoto.setImageDrawable(drawProfile)
-                binding.coverPhoto.setImageDrawable(drawcoverProfile)
-            } catch (e: java.lang.Exception) {
-                e.printStackTrace()
-            }
+
+        val userId = Firebase.auth.currentUser?.uid!!
+
+        Log.e(">>>>>>>>>>>>", "on create")
+        Firebase.firestore.collection("users").document(userId).get().addOnSuccessListener {
+            Log.e(">>>>>>>>>>>>", "en firebase")
+            user = it.toObject(User::class.java)!!
+            loadImageFromWebOperationsProfile(user.profileURI)
+            loadImageFromWebOperationsCover(user.coverURI)
+        }.addOnFailureListener{
+            Log.e("Death", "Death")
         }
-        thread.start()
+
+        Log.e(">>>>>>>>>>>>", "despues de firebase")
+
         return view
     }
     private fun openFileChooser() {
         val intent = Intent()
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(intent, 1)
+        launcherCover.launch(intent)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1 && resultCode == AppCompatActivity.RESULT_OK && data != null && data.data != null) {
-            mImageUri = data.data
-            val bitmap=MediaStore.Images.Media.getBitmap(context?.contentResolver,mImageUri)
-            val bitmapD= BitmapDrawable(bitmap)
+    private fun onActivityResult(result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            mImageUri = result.data?.data
             if(photo==1){
                 user.profileURI=mImageUri.toString()
-                binding.profilePhoto.setBackgroundDrawable(bitmapD)
+                binding.profilePhoto.setImageURI(mImageUri)
                 uploadFile()
             }else{
                 user.coverURI=mImageUri.toString()
-                binding.coverPhoto.setBackgroundDrawable(bitmapD)
+                binding.coverPhoto.setImageURI(mImageUri)
                 uploadFile()
             }
 
         }
     }
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
+
+        Log.e(">>>>>>>>>>>>", "on start")
 
         val userId = Firebase.auth.currentUser?.uid!!
         Firebase.firestore.collection("users").document(userId).get().addOnSuccessListener {
             user = it.toObject(User::class.java)!!
             binding.dateView.text=user.birthday
             binding.emailView.text=user.email
+            loadImageFromWebOperationsProfile(user.profileURI)
+            loadImageFromWebOperationsCover(user.coverURI)
         }.addOnFailureListener{
             Log.e("Death", "Death")
         }
     }
+
     private fun uploadFile(){
-        val filename= UUID.randomUUID().toString()
-        mStorageRef= FirebaseStorage.getInstance().getReference("/$filename")
-        mImageUri?.let {
+        var filename = user.id
+        filename = if(photo==1){
+            "profile/${filename}"
+        }else{
+            "cover/${filename}"
+        }
+
+        mStorageRef= FirebaseStorage.getInstance().getReference("images/user/$filename")
+        mImageUri?.let { it ->
             mStorageRef!!.putFile(it)
                 .addOnSuccessListener{
-                    Log.e("TODO BIEN","")
-                    mStorageRef!!.downloadUrl.addOnSuccessListener {
-                        it.toString()
+                    Log.e("ALL RIGHT","")
+                    mStorageRef!!.downloadUrl.addOnSuccessListener {result->
+                        updateUser(result.toString(), photo!!)
                     }
                 }
         }
     }
-    fun LoadImageFromWebOperationsProfle(url: String?): Drawable? {
-        return try {
-            val `is`: InputStream = URL(url).getContent() as InputStream
-            Drawable.createFromStream(`is`, "avatar")
-        } catch (e: Exception) {
-            Log.d("Exception: ",e.toString())
-            null
+
+    private fun updateUser(url: String?, option:Int){
+        val field = if(option==1){
+            "profileURI"
+        }else{
+            "coverURI"
+        }
+        Firebase.firestore.collection("users").document(user.id).update(field,url).addOnSuccessListener {
+            Toast.makeText(activity, "Profile updated", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener{
+            Toast.makeText(activity, "Failed to update profile", Toast.LENGTH_SHORT).show()
         }
     }
-    fun LoadImageFromWebOperationsCover(url: String?): Drawable? {
-        return try {
-            val `is`: InputStream = URL(url).getContent() as InputStream
-            Drawable.createFromStream(`is`, "avatar")
-        } catch (e: Exception) {
-            Log.d("Exception: ",e.toString())
-            null
+
+    private fun loadImageFromWebOperationsProfile(url:String?) {
+
+        Log.e(">>>>>>>>>>>>", "antes de cargar perfil")
+
+        if(url!=null && url!="null" && url!=""){
+            val imgRequest = ImageRequest( url,{ bitmap->
+
+                Log.e(">>>>>>>>>>>>", "perfil Cargado")
+                binding.profilePhoto.setImageBitmap(bitmap)
+            },0,0, ImageView.ScaleType.CENTER, Bitmap.Config.ARGB_8888, {
+                Log.e(">>>>>>>>>>>>", "Failed to load image of club")
+            })
+            queue.add(imgRequest)
+            Log.e(">>>>>>>>>>>>", "cargando perfil")
         }
     }
+
+    private fun loadImageFromWebOperationsCover(url:String?) {
+
+        Log.e(">>>>>>>>>>>>", "antes de cover")
+        if(url!=null && url!="null" && url!=""){
+            val imgRequest = ImageRequest( url,{ bitmap->
+                Log.e(">>>>>>>>>>>>", "cover cargado")
+                binding.coverPhoto.setImageBitmap(bitmap)
+            },0,0, ImageView.ScaleType.CENTER, Bitmap.Config.ARGB_8888, {
+                Log.e(">>>>>>>>>>>>", "Failed to load image of club")
+            })
+            queue.add(imgRequest)
+            Log.e(">>>>>>>>>>>>", "cargando cover")
+        }
+    }
+
     companion object {
         @JvmStatic
         fun newInstance() = ProfileFragment()

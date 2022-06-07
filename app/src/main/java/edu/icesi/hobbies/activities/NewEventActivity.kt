@@ -1,6 +1,7 @@
 package edu.icesi.hobbies.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,9 +14,7 @@ import com.google.firebase.ktx.Firebase
 import edu.icesi.hobbies.databinding.ActivityNewEventBinding
 import edu.icesi.hobbies.model.Club
 import edu.icesi.hobbies.model.Event
-import kotlinx.android.synthetic.main.fragment_live_map.*
 import java.time.LocalDate
-import java.util.*
 
 class NewEventActivity : AppCompatActivity() {
 
@@ -23,7 +22,8 @@ class NewEventActivity : AppCompatActivity() {
 
     private var db = Firebase.firestore
 
-    private var pos:LatLng = LatLng(0.506, 0.723)
+    private var pos:LatLng?=null
+    private lateinit var date:LocalDate
 
     //Launchers
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::onResultLocationSelected)
@@ -44,43 +44,85 @@ class NewEventActivity : AppCompatActivity() {
         }
 
         binding.btnEventSend.setOnClickListener {
-            try {
-                val dates=binding.editTextEventDate.text.toString().split('/')
-                val day = dates[0].toInt()
-                val month = dates[1].toInt()
-                val year = dates[2].toInt()
 
-                val id:String= UUID.randomUUID().toString()
-                val name = binding.editTextEventTitle.text.toString()
+            //Read data
+            val name = binding.editTextEventTitle.text.toString()
+            val description:String= binding.editTextEventDescription.text.toString()
+            val day = binding.editTextDay.text.toString()
+            val month = binding.editTextMonth.text.toString()
+            val year = binding.editTextYear.text.toString()
+            val participants = binding.editTextEventNumber.text.toString()
 
-                var club:Club?=null
-                val chatClubId = intent.extras?.get("clubId").toString()
-                db.collection("clubs").document(chatClubId).get().addOnSuccessListener {
-                     club = it.toObject(Club::class.java)
-                }
-
-                val clubName = club?.name!!
-
-                //
-                val description:String= binding.editTextEventDescription.text.toString()
-                val date = LocalDate.of(year,month,day)
-                val participants:Int= binding.editTextEventNumber.text.toString().toInt()
-
-                val event = Event(id,name,clubName,"placeName","imgClubUri",chatClubId,pos,description,date,participants)
-                db.collection("events").document(id).set(event).addOnSuccessListener {
-                    val intent = Intent(this, ChatActivity::class.java).apply {
-                        putExtra("chatId", chatClubId)
-                        putExtra("event", event)
+            //Verify formats--------------------------------------------------
+            val warningMessage = if(
+                name=="" &&
+                day=="" && month=="" && year=="" &&
+                participants==""
+            ){
+                "Empty fields"
+            }else{
+                if(pos==null){
+                    "Location not selected"
+                }else{
+                    if(name.length<5){
+                        "Title too short"
+                    }else{
+                        if(participants.toInt()<2){
+                            "Very few participants"
+                        }else{
+                            isCorrectDate(day.toInt(), month.toInt(), year.toInt())
+                        }
                     }
-                    setResult(Activity.RESULT_OK, intent)
-                    finish()
-                }.addOnFailureListener{
-                    Toast.makeText(this,"Fail to upload event",Toast.LENGTH_LONG).show()
                 }
-                
-            }catch (e:Exception){
-                Toast.makeText(this,e.message,Toast.LENGTH_LONG).show()
             }
+            //--------------------------------------------------
+            if (warningMessage!="Correct"){
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage(warningMessage)
+                builder.create()
+                builder.show()
+            }else{
+
+                    //Get current club
+                val chatClubId = intent.extras?.get("clubId").toString()
+                var club:Club?
+                db.collection("clubs").document(chatClubId).get().addOnSuccessListener {
+                    club = it.toObject(Club::class.java)
+
+                    //ID = CLUB_ID + #Event
+                    val id="${club?.id}_${club?.totalEvents?.plus(1)}"
+
+                    //Create Event--------------------------------------------------------------------------------------------------
+                    val event = Event(
+                        id,
+                        name,
+                        club?.name!!,
+                        "- - -",
+                        club?.imageUri.toString(),
+                        chatClubId,
+                        pos?.latitude!!,
+                        pos?.longitude!!,
+                        description,
+                        date.dayOfMonth,
+                        date.monthValue,
+                        date.year,
+                        participants.toInt()
+                    )
+                    uploadEvent(event)
+                }
+            }
+        }
+    }
+
+    private fun uploadEvent(event:Event){
+        db.collection("events").document(event.id).set(event).addOnSuccessListener {
+            val intent = Intent(this, ChatActivity::class.java).apply {
+                putExtra("chatId", event.chatClubId)
+            }
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }.addOnFailureListener{
+            Toast.makeText(this,"Fail to upload event",Toast.LENGTH_LONG).show()
         }
     }
 
@@ -93,5 +135,43 @@ class NewEventActivity : AppCompatActivity() {
         }else{
             Toast.makeText(this, "Location not selected", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun isCorrectDate(day:Int, month:Int, year:Int): String{
+        val message: String
+
+        //Verify non negatives and month
+        if((month in 1..12) && day>0 && (year in 2022..2100)){
+
+            //Verify numbers of days
+            val isCorrect = if(month==1 || month==3 || month==5 || month==7
+                || month==8 || month==10 || month==12){
+                (day in 1..31)
+            }else if(month==4 || month==6 || month==9 || month==11){
+                (day in 1..30)
+            }else{
+                if (year%4==0){
+                    (day in 1..29)
+                }else{
+                    (day in 1..28)
+                }
+            }
+
+            message = if(isCorrect){
+                //Verify if its After now
+                date = LocalDate.of(year,month,day)
+                if (date.isAfter(LocalDate.now())){
+                    "Correct"
+                }else{
+                    "Date must be in the future"
+                }
+            }else{
+                "Day out of range"
+            }
+
+        }else{
+            message="Please type positive numbers in calendar range"
+        }
+        return message
     }
 }

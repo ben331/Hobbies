@@ -5,13 +5,13 @@ import java.io.Serializable
 open class User(): Serializable{
     var id:String = "Dummy"
     var name:String = "Dummy"
-    var phone:String = "3158033739"
+    //var phone:String = "3158033739"
     var email:String = "Dummy"
     var birthday: String = "Dummy"
     var profileURI:String = ""
     var coverURI:String = ""
 
-    lateinit var contacts:ArrayList<User>
+    private lateinit var contactsId:ArrayList<String>
     lateinit var hobbies:ArrayList<Hobby>
     lateinit var requestBox:Chat
 
@@ -20,7 +20,7 @@ open class User(): Serializable{
         this.name = name
         this.email = email
         this.birthday = birthday
-        this.contacts = ArrayList()
+        this.contactsId = ArrayList()
         this.hobbies = ArrayList()
         requestBox = Chat()
     }

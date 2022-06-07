@@ -20,6 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hobbies">
         <activity
+            android:name=".activities.SplashActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.NewEventActivity"
             android:exported="false" />
         <activity

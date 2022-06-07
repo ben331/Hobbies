@@ -10,10 +10,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.ImageRequest
+import com.android.volley.toolbox.Volley
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import edu.icesi.hobbies.R
 import edu.icesi.hobbies.databinding.FragmentLiveMapBinding
+import edu.icesi.hobbies.model.Club
 import edu.icesi.hobbies.model.Event
 
 class LiveMapFragment : Fragment (), MapsFragment.OnClickMarkerListener {
@@ -37,7 +40,9 @@ class LiveMapFragment : Fragment (), MapsFragment.OnClickMarkerListener {
     ): View {
 
         _binding = FragmentLiveMapBinding.inflate(inflater, container, false)
-        
+
+        queue = Volley.newRequestQueue(activity)
+
         //Create Fragment
         mapsFragment = MapsFragment(false)
         val transaction = activity?.supportFragmentManager?.beginTransaction()
@@ -47,8 +52,12 @@ class LiveMapFragment : Fragment (), MapsFragment.OnClickMarkerListener {
         //Subscribe listener
         mapsFragment.listener = this
 
-        mapsFragment.loadEvents()
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapsFragment.loadEvents()
     }
 
     override fun onDestroyView() {
@@ -62,7 +71,6 @@ class LiveMapFragment : Fragment (), MapsFragment.OnClickMarkerListener {
     }
 
     override fun showEventInfo(idMarker: String) {
-
         //Get Event by Id
         db.collection("events").document(idMarker).get().addOnSuccessListener { document ->
             val event = document.toObject(Event::class.java)!!
@@ -86,7 +94,27 @@ class LiveMapFragment : Fragment (), MapsFragment.OnClickMarkerListener {
             binding.requestBtn.setOnClickListener{
 
                 //Send request function call (chat)
-                Toast.makeText(activity, "wait for the answer in your request-box", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "Joined to new club", Toast.LENGTH_SHORT).show()
+
+                db.collection("users").document(Firebase.auth.uid.toString()).collection("clubs").document(event.chatClubId).get().addOnSuccessListener {
+                    Toast.makeText(activity, "You are already in this club", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener{
+
+                    db.collection("clubs").document(event.chatClubId).get().addOnSuccessListener {
+
+                        val club = it.toObject(Club::class.java)
+
+                        db.collection("users").document(Firebase.auth.uid.toString()).collection("clubs").document(event.chatClubId).set(club!!).addOnSuccessListener {
+                            Toast.makeText(activity, "Joined to a new club. Check home", Toast.LENGTH_SHORT).show()
+                        }.addOnFailureListener{
+                            Toast.makeText(activity, "Failed to join to club", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }.addOnFailureListener{
+                        Toast.makeText(activity, "Failed to download club", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
                 binding.infoContainer.visibility = View.GONE
             }
         }

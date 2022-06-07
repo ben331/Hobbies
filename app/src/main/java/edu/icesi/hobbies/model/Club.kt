@@ -7,5 +7,6 @@ data class Club(
     var name:String = "",
     var hobby:Hobby?=null,
     var adminId:String="",
-    var imageUri:String=""
+    var imageUri:String="",
+    var totalEvents:Int=0
 ) :Serializable

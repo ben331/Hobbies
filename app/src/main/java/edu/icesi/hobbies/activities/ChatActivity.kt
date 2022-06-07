@@ -52,7 +52,7 @@ class ChatActivity : AppCompatActivity() {
         binding.btnNewEvent.setOnClickListener{
             val intent = Intent(this, NewEventActivity::class.java)
             intent.putExtra("clubId", chatId)
-            startActivity(intent)
+            launcher.launch(intent)
         }
 
         if(chatId.isNotEmpty() && userId.isNotEmpty()) {
@@ -95,10 +95,6 @@ class ChatActivity : AppCompatActivity() {
     }
     
     private fun onResultNewEvent(result:ActivityResult){
-        if(result.resultCode== RESULT_OK){
-            
-        }else{
-            Toast.makeText(this, "Fail to create event", Toast.LENGTH_SHORT).show()
-        }
+
     }
 }

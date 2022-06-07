@@ -1,7 +1,6 @@
 package edu.icesi.hobbies.activities
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -14,7 +13,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,9 +33,6 @@ import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment(), HomeAdapter.OnLoadImageListener {
 
-    //Firebase
-    private var db = Firebase.firestore
-
     //Binding
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -51,10 +46,6 @@ class HomeFragment : Fragment(), HomeAdapter.OnLoadImageListener {
     //RequestQueue of Volley
     private lateinit var queue : RequestQueue
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,7 +56,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnLoadImageListener {
         //Initialize Volley Queue
         queue = Volley.newRequestQueue(activity)
 
-        //recrear el estado
+        //Recreate State
         val clubRecycler = binding.clubRecycler
         clubRecycler.setHasFixedSize(true)
         clubRecycler.layoutManager = LinearLayoutManager(activity)
@@ -81,7 +72,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnLoadImageListener {
 
         binding.clubRecycler.adapter = adapter
 
-        //Listener on Editext
+        //Listener on Edi-text
         binding.searchClub.addTextChangedListener(object : TextWatcher {
 
             override fun afterTextChanged(s: Editable) {}
@@ -92,8 +83,8 @@ class HomeFragment : Fragment(), HomeAdapter.OnLoadImageListener {
 
             override fun onTextChanged(s: CharSequence, start: Int,
                                        before: Int, count: Int) {
-                val clubname = binding.searchClub.text.toString().lowercase()
-                getClubsFromUserByClubname(clubname)
+                val clubName = binding.searchClub.text.toString().lowercase()
+                getClubsFromUserByClubName(clubName)
             }
         })
 
@@ -127,17 +118,9 @@ class HomeFragment : Fragment(), HomeAdapter.OnLoadImageListener {
         }.addOnFailureListener{
             Toast.makeText(activity, "Fail to load home", Toast.LENGTH_SHORT).show()
         }
-
-        getClubsfromUser()
-
         return view
     }
-    private fun getClubsFromUserByClubname(clubName: String){
-        lifecycleScope.launch (Dispatchers.IO){
-            withContext(Dispatchers.Main){
-                //adapter.clean()
-            }
-        }
+    private fun getClubsFromUserByClubName(clubName: String){
         val query = Firebase.firestore.collection("users").document(userId).collection("clubs")
         query.get().addOnCompleteListener { task ->
 
@@ -156,16 +139,11 @@ class HomeFragment : Fragment(), HomeAdapter.OnLoadImageListener {
                 adapter.refreshClubs(clubs)
 
             }else{
-                Toast.makeText(activity ,"Actualmente no tienes clubes", Toast.LENGTH_LONG).show()
+                Toast.makeText(activity ,"Currently you don't have clubs", Toast.LENGTH_LONG).show()
             }
         }
     }
-    private fun getClubsfromUser(){
-        lifecycleScope.launch(Dispatchers.IO){
-            withContext(Dispatchers.Main){
-                //adapter.clean()
-            }
-        }
+    private fun getClubsFromUser(){
         val query = Firebase.firestore.collection("users").document(userId).collection("clubs")
         query.get().addOnCompleteListener { task ->
             if(task.result?.size() != 0){
@@ -185,14 +163,13 @@ class HomeFragment : Fragment(), HomeAdapter.OnLoadImageListener {
             }
         }
     }
-    override fun onStart() {
-        super.onStart()
-        getClubsfromUser()
-    }
+
+    //Recover state--------------------------------------------------------------------------------
     override fun onResume(){
         super.onResume()
-        getClubsfromUser()
+        getClubsFromUser()
     }
+    //--------------------------------------------------------------------------------
 
     companion object {
         @JvmStatic
@@ -206,18 +183,6 @@ class HomeFragment : Fragment(), HomeAdapter.OnLoadImageListener {
         startActivity(intent)
     }
 
-    private fun newClub(club:Club){
-        val otherChat = binding.searchClub.text.toString()
-        val users = listOf(userId,otherChat)
-
-        db.collection("clubs").document(club.id).set(club)
-        db.collection("users").document(userId).collection("clubs").document(club.id).set(club)
-
-        val intent = Intent(activity, ChatActivity::class.java)
-        intent.putExtra("chatId", club.id)
-        startActivity(intent)
-    }
-
     override fun downloadImage(url: String?, img: ImageView) {
         if(url!=null && url!="null" && url!=""){
             Log.e("Error>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", url)
@@ -225,7 +190,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnLoadImageListener {
             val imgRequest = ImageRequest( url,{ bitmap->
                 img.setImageBitmap(bitmap)
             },0,0, ImageView.ScaleType.CENTER, Bitmap.Config.ARGB_8888, {
-                Log.e(">>>>>>>>>>>>", "Faile to load image of club")
+                Log.e(">>>>>>>>>>>>", "Failed to load image of club")
             })
             queue.add(imgRequest)
         }

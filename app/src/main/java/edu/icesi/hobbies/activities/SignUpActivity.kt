@@ -2,7 +2,6 @@ package edu.icesi.hobbies.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -31,7 +30,7 @@ class SignUpActivity : AppCompatActivity() {
             val date = binding.editTextDateSignupBirthday.text.toString()
 
             if(name.isEmpty() || email.isEmpty()||date.isEmpty()){
-                Toast.makeText(this,"Datos vacios, por favor marcar todos",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,"Empty fields",Toast.LENGTH_SHORT).show()
             }else{
                 try {
                     val dates=date.split('/')
@@ -41,12 +40,12 @@ class SignUpActivity : AppCompatActivity() {
                     val birthday = LocalDate.of(year,month,day)
 
                     if(birthday.isAfter(LocalDate.now().minusYears(18))){
-                        Toast.makeText(this,"Debes ser mayor de edad",Toast.LENGTH_LONG).show()
+                        Toast.makeText(this,"you must be of legal age",Toast.LENGTH_LONG).show()
                     }else{
                         register(name,email,date)
                     }
                 }catch (e:Exception){
-                    Toast.makeText(this,"Fecha no valida",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"Invalid date",Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -60,7 +59,7 @@ class SignUpActivity : AppCompatActivity() {
         ).addOnSuccessListener {
             val id = Firebase.auth.currentUser?.uid
             val user = User(id!!,name,email,birthday)
-            Firebase.firestore.collection("users").document(id!!).set(user).addOnSuccessListener {
+            Firebase.firestore.collection("users").document(id).set(user).addOnSuccessListener {
                 sendVerificationEmail()
                 finish()
             }
@@ -69,9 +68,9 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    fun sendVerificationEmail(){
+    private fun sendVerificationEmail(){
         Firebase.auth.currentUser?.sendEmailVerification()?.addOnSuccessListener {
-            Toast.makeText(this,"Verifique su email antes de entrar",Toast.LENGTH_LONG).show()
+            Toast.makeText(this,"Check your email before to login",Toast.LENGTH_LONG).show()
         }?.addOnFailureListener{
             Toast.makeText(this,it.message,Toast.LENGTH_LONG).show()
         }

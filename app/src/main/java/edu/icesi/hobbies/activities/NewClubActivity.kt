@@ -2,21 +2,19 @@ package edu.icesi.hobbies.activities
 
 import android.Manifest
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import edu.icesi.hobbies.databinding.ActivityMainBinding
 import edu.icesi.hobbies.databinding.ActivityNewClubBinding
-import edu.icesi.hobbies.model.Admin
 import edu.icesi.hobbies.model.Club
 import edu.icesi.hobbies.model.Hobby
 import edu.icesi.hobbies.model.User
@@ -27,8 +25,12 @@ class NewClubActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewClubBinding
 
     private var mStorageRef: StorageReference? = null
-    private  var mImageUri: Uri? = null
-    private  var mImageUrl: Uri? = null
+    private var mImageUri: Uri? = null
+    private var mImageUrl: Uri? = null
+    private var clubId: String = UUID.randomUUID().toString()
+
+    //Gallery Launchers
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::onActivityResult)
 
     private lateinit var currentUser: User
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +57,6 @@ class NewClubActivity : AppCompatActivity() {
                 Toast.makeText(this,"Empty values", Toast.LENGTH_SHORT).show()
             }else{
                 val hobby = Hobby(UUID.randomUUID().toString(),hobbyName, "")
-                val clubId = UUID.randomUUID().toString()
                 val adminId = currentUser.id
 
                 Log.e(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Uri", mImageUrl.toString())
@@ -78,12 +79,11 @@ class NewClubActivity : AppCompatActivity() {
         }
     }
     private fun uploadFile(){
-        val filename= UUID.randomUUID().toString()
-        mStorageRef= FirebaseStorage.getInstance().getReference("images/$filename")
+        mStorageRef= FirebaseStorage.getInstance().getReference("images/club/$clubId")
         mImageUri?.let { it ->
             mStorageRef!!.putFile(it)
                 .addOnSuccessListener{
-                    Log.e("TODO BIEN","")
+                    Log.e("ALL RIGHT","")
                     mStorageRef!!.downloadUrl.addOnSuccessListener {result->
                         mImageUrl = result
                     }
@@ -95,15 +95,13 @@ class NewClubActivity : AppCompatActivity() {
         val intent = Intent()
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(intent, 1)
+        launcher.launch(intent)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1 && resultCode == AppCompatActivity.RESULT_OK && data != null && data.data != null) {
-            mImageUri = data.data
-            val bitmap= MediaStore.Images.Media.getBitmap(this.contentResolver,mImageUri)
-            binding.imgClub.setImageBitmap(bitmap)
+    private fun onActivityResult(result: ActivityResult) {
+        if (result.resultCode == RESULT_OK) {
+            mImageUri = result.data?.data
+            binding.imgClub.setImageURI(mImageUri)
             uploadFile()
         }
     }
