@@ -95,22 +95,26 @@ class LiveMapFragment : Fragment (), MapsFragment.OnClickMarkerListener {
 
                 //Send request function call (chat)
                 db.collection("users").document(Firebase.auth.currentUser?.uid.toString()).collection("clubs").document(event.chatClubId).get().addOnSuccessListener {
-                    Toast.makeText(activity, "You are already in this club", Toast.LENGTH_SHORT).show()
-                }.addOnFailureListener{
+                    val club = it.toObject(Club::class.java)
+                    if(club!=null){
+                        Toast.makeText(activity, "You are already in this club", Toast.LENGTH_SHORT).show()
+                    }else{
+                        db.collection("clubs").document(event.chatClubId).get().addOnSuccessListener {
 
-                    db.collection("clubs").document(event.chatClubId).get().addOnSuccessListener {
+                            val club = it.toObject(Club::class.java)
 
-                        val club = it.toObject(Club::class.java)
+                            db.collection("users").document(Firebase.auth.currentUser?.uid.toString()).collection("clubs").document(event.chatClubId).set(club!!).addOnSuccessListener {
+                                Toast.makeText(activity, "Joined to a new club. Check home", Toast.LENGTH_SHORT).show()
+                            }.addOnFailureListener{
+                                Toast.makeText(activity, "Failed to join to club", Toast.LENGTH_SHORT).show()
+                            }
 
-                        db.collection("users").document(Firebase.auth.currentUser?.uid.toString()).collection("clubs").document(event.chatClubId).set(club!!).addOnSuccessListener {
-                            Toast.makeText(activity, "Joined to a new club. Check home", Toast.LENGTH_SHORT).show()
                         }.addOnFailureListener{
-                            Toast.makeText(activity, "Failed to join to club", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(activity, "Failed to download club", Toast.LENGTH_SHORT).show()
                         }
-
-                    }.addOnFailureListener{
-                        Toast.makeText(activity, "Failed to download club", Toast.LENGTH_SHORT).show()
                     }
+                }.addOnFailureListener{
+                    Toast.makeText(activity, "Failed to download club", Toast.LENGTH_SHORT).show()
                 }
 
                 binding.infoContainer.visibility = View.GONE
