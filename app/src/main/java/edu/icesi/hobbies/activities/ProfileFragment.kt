@@ -58,6 +58,7 @@ class ProfileFragment : Fragment() {
             openFileChooser()
         }
         binding.logoutBtn.setOnClickListener {
+            Firebase.auth.signOut()
             val intent = Intent(activity, MainActivity::class.java)
             startActivity(intent)
         }

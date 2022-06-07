@@ -94,9 +94,7 @@ class LiveMapFragment : Fragment (), MapsFragment.OnClickMarkerListener {
             binding.requestBtn.setOnClickListener{
 
                 //Send request function call (chat)
-                Toast.makeText(activity, "Joined to new club", Toast.LENGTH_SHORT).show()
-
-                db.collection("users").document(Firebase.auth.uid.toString()).collection("clubs").document(event.chatClubId).get().addOnSuccessListener {
+                db.collection("users").document(Firebase.auth.currentUser?.uid.toString()).collection("clubs").document(event.chatClubId).get().addOnSuccessListener {
                     Toast.makeText(activity, "You are already in this club", Toast.LENGTH_SHORT).show()
                 }.addOnFailureListener{
 
@@ -104,7 +102,7 @@ class LiveMapFragment : Fragment (), MapsFragment.OnClickMarkerListener {
 
                         val club = it.toObject(Club::class.java)
 
-                        db.collection("users").document(Firebase.auth.uid.toString()).collection("clubs").document(event.chatClubId).set(club!!).addOnSuccessListener {
+                        db.collection("users").document(Firebase.auth.currentUser?.uid.toString()).collection("clubs").document(event.chatClubId).set(club!!).addOnSuccessListener {
                             Toast.makeText(activity, "Joined to a new club. Check home", Toast.LENGTH_SHORT).show()
                         }.addOnFailureListener{
                             Toast.makeText(activity, "Failed to join to club", Toast.LENGTH_SHORT).show()
